@@ -25,4 +25,15 @@ class VideoService(FileService):
         else:
             raise NotImplementedError
 
-        self.driver.upload_file(dir)
+        path, status, info = self.driver.upload_file(dir)
+
+        if status == 'FAIL':
+            raise DriverException(info)
+
+        return path
+
+    def download(self, path: str):
+        return super().donwload(path)
+
+    def delete(self, path: str):
+        return super().delete(path)

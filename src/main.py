@@ -1,10 +1,11 @@
 
-import os
+from api.endpoints import app
+from config.config import isDevelopment
 
 
 def main():
-    print('main')
-    print(os.environ.get('hello'))
+    if isDevelopment:
+        app.run(debug=True)
     pass
 
 
