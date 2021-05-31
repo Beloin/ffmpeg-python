@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "E-learning Storage"
+
+[packages]
+python-ffmpeg-video-streaming = "*"
+
+[dev-packages]
+autopep8 = "*"
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+dev = "env hello=world python3 ./src/main.py"
