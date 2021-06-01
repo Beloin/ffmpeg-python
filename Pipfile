@@ -6,6 +6,7 @@ name = "E-learning Storage"
 [packages]
 python-ffmpeg-video-streaming = "*"
 flask = "*"
+python-dotenv = "*"
 
 [dev-packages]
 autopep8 = "*"

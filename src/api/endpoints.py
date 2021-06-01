@@ -1,31 +1,30 @@
 from flask import Flask, request
-
-from services.file_service import FileService
-from services.video_service import VideoService
+from werkzeug.utils import secure_filename
+from api.default_service import DefaultService
+from config.config import STREAM_DIR
+import os
 
 app = Flask(__name__)
 
-defaulDriver = None
-videoService = VideoService(defaulDriver)
-fileService = FileService(defaulDriver)
-
-
-@app.get('/storage/<path:file_path>',)
-def get_file(file_path: str):
-
-    return f'Getting... {file_path}'
+service = DefaultService()
 
 
 @app.post('/upload/<path:identifiers>')
 def upload_file(identifiers: str):
-    """
-    Identifiers separeted by '/'.
-    """
+    file = request.files['file']
+    file_name = secure_filename(file.filename)
+    file_path = os.path.join(STREAM_DIR, file_name)
+    path = file.save(file_path)
 
-    return 'Uploading...'
+    path = service.upload_file(*identifiers)
+    return path
+
+
+@app.get('/storage/<path:file_path>',)
+def get_file(file_path: str):
+    return service.get_file(file_path)
 
 
 @app.delete('/storage/<path:file_path>')
 def delete_item(file_path: str):
-
-    return 'Deleting...'
+    return service.delete_file(file_path)

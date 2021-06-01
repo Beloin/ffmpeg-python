@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0879faebd78e59675040832a2de7f58a0617b021635cd5ff9138762cd7cf08a9"
+            "sha256": "8359cdb597b25edabbc03122df94d54402999ece23e76e1b7c8bb6fcefbdd864"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -87,6 +87,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==2.0.1"
+        },
+        "python-dotenv": {
+            "hashes": [
+                "sha256:00aa34e92d992e9f8383730816359647f358f4a3be1ba45e5a5cefd27ee91544",
+                "sha256:b1ae5e9643d5ed987fc57cc2583021e38db531946518130777734f9589b3141f"
+            ],
+            "index": "E-learning Storage",
+            "version": "==0.17.1"
         },
         "python-ffmpeg-video-streaming": {
             "hashes": [
