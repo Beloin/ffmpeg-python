@@ -10,8 +10,6 @@ class DefaultService:
 
     def upload_file(self, path: str, *identifiers: str) -> str:
         """
-        Identifiers separeted by '/'.
-
         First identifier are the most important.
         But the last ones are used to prevent data replace.
         """

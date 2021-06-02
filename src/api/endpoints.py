@@ -11,12 +11,13 @@ service = DefaultService()
 
 @app.post('/upload/<path:identifiers>')
 def upload_file(identifiers: str):
+    """ Identifiers separeted by '/'."""
     file = request.files['file']
     file_name = secure_filename(file.filename)
     file_path = os.path.join(STREAM_DIR, file_name)
     path = file.save(file_path)
 
-    path = service.upload_file(*identifiers)
+    path = service.upload_file(identifiers.split('/'))
     return path
 
 
