@@ -1,5 +1,6 @@
+from io import BufferedReader
 import os
-from os.path import join, normpath
+from os.path import join, normpath, isfile
 import shutil
 
 from typing import Tuple, Union
@@ -14,6 +15,7 @@ class FileSystemDriver(DriverInterface):
 
     def upload_file(self, file: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[str, Status, str]:
         to_save = self._normajoin(self.save_dir, *identifiers)
+        print(to_save)
 
         if type(file) is str:
             try:
@@ -24,7 +26,7 @@ class FileSystemDriver(DriverInterface):
                 return '', 'FAIL', str(e)
 
         # If is not file. We don't have yet an implementation.
-        raise Exception('File not sent in str like is not acceptable.')
+        raise Exception('File not sent in str like.')
 
     def delete_file(self, path: str) -> Tuple[Status, str]:
         try:
@@ -36,9 +38,16 @@ class FileSystemDriver(DriverInterface):
             return 'FAIL', str(e)
 
     def download_file(self, path: str) -> Tuple[any, Status, str]:
-        pass
+        return self._read_file(path)
 
     # Private Methods
+    def _read_file(self,path: str) -> BufferedReader:
+        if not isfile(path):
+            raise Exception('Path needs to be a file.')
+        f = open(path, 'rb')
+
+        return f
+
     def _normajoin(*paths: str):
         return normpath(join(*paths))
 
