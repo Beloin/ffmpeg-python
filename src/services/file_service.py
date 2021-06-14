@@ -19,7 +19,7 @@ class FileService(FileServiceInterface):
         return path
 
     def download(self, path: str) -> any:
-        file, status, info = self.driver.download(path)
+        file, status, info = self.driver.download_file(path)
 
         if status == 'FAIL':
             raise DriverException(info)

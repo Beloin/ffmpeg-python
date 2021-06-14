@@ -23,7 +23,8 @@ def upload_file(identifiers: str):
 
 @app.get('/storage/<path:file_path>',)
 def get_file(file_path: str):
-    return service.get_file(file_path)
+    ret = service.get_file(file_path)
+    return ret.read()
 
 
 @app.delete('/storage/<path:file_path>')

@@ -8,6 +8,8 @@ from storage.driver import DriverInterface, Status
 
 
 class FileSystemDriver(DriverInterface):
+    """ Driver thats saves files in computes's current filesystem."""
+
     def __init__(self, save_dir) -> None:
         super().__init__()
 
@@ -23,7 +25,7 @@ class FileSystemDriver(DriverInterface):
                 shutil.move(file, to_path)
                 return to_path, 'OK', 'File saved successfully'
             except Exception as e:
-                return '', 'FAIL', str(e)
+                return None, 'FAIL', str(e)
 
         # If is not file. We don't have yet an implementation.
         raise Exception('File not sent in str like.')
@@ -38,10 +40,14 @@ class FileSystemDriver(DriverInterface):
             return 'FAIL', str(e)
 
     def download_file(self, path: str) -> Tuple[any, Status, str]:
-        return self._read_file(path)
+        try:
+            reader = self._read_file(path)
+            return reader, 'OK', 'File sent in Buffer.'
+        except Exception as e:
+            return None, 'FAIL', str(e)
 
     # Private Methods
-    def _read_file(self,path: str) -> BufferedReader:
+    def _read_file(self, path: str) -> BufferedReader:
         if not isfile(path):
             raise Exception('Path needs to be a file.')
         f = open(path, 'rb')

@@ -1,10 +1,11 @@
-from typing import List
+from io import BufferedReader
 from services.file_service import FileService
 from services.video_service import VideoService
+from storage.drivers.filesystem_driver import FileSystemDriver
 
 
 class DefaultService:
-    defaulDriver = None
+    defaulDriver = FileSystemDriver('./test_files')
     videoService = VideoService(defaulDriver)
     fileService = FileService(defaulDriver)
 
@@ -16,8 +17,8 @@ class DefaultService:
 
         return 'Lol my man'
 
-    def get_file(self, path: str):
-        return 'Lol my man'
+    def get_file(self, path: str) -> BufferedReader:
+        return self.fileService.download(path)
 
     def delete_file(self, path: str):
-        return 'Lol my man'
+        return self.fileService.delete(path)
