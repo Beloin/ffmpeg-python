@@ -1,21 +1,32 @@
+from enum import Enum
 from io import BufferedReader
+from typing import Literal
+
 from services.file_service import FileService
 from services.video_service import VideoService
 from storage.drivers.filesystem_driver import FileSystemDriver
 
 
-class DefaultService:
-    defaulDriver = FileSystemDriver('./test_files')
-    videoService = VideoService(defaulDriver)
-    fileService = FileService(defaulDriver)
+class FileType(Enum):
+    VIDEO = 'VIDEO'
+    FILE = 'FILE'
 
-    def upload_file(self, path: str, *identifiers: str) -> str:
+
+class DefaultService:
+    defaultDriver = FileSystemDriver('./test_files')
+    videoService = VideoService(defaultDriver)
+    fileService = FileService(defaultDriver)
+
+    def upload_file(self, path: str, file_type: FileType, *identifiers: str) -> str:
         """
         First identifier are the most important.
-        But the last ones are used to prevent data replace.
+        The last are used to prevent data replacement.
         """
 
-        return 'Lol my man'
+        if file_type == FileType.VIDEO:
+            return self.videoService.upload(path, *identifiers)
+
+        return self.fileService.upload(path, *identifiers)
 
     def get_file(self, path: str) -> BufferedReader:
         return self.fileService.download(path)

@@ -30,7 +30,7 @@ class FFmpegUser:
 
         rep = []
         for vsize in vsizes:
-            rep.append(self._get_representation(vsize))
+            rep.append(self.__get_representation(vsize))
 
         hls.representations(*rep)
 
@@ -41,7 +41,7 @@ class FFmpegUser:
 
         return output, new_output
 
-    def _get_representation(self, vsize: VSize):
+    def __get_representation(self, vsize: VSize):
         if vsize == '1080X720':
             return ff.Representation(
                 ff.Size(1080, 720), ff.Bitrate(2048 * 2 ^ 10, 320 * 1024))

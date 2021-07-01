@@ -54,7 +54,7 @@ class FileSystemDriver(DriverInterface):
 
         return f
 
-    def _normajoin(*paths: str):
+    def _normajoin(self, *paths: str):
         return normpath(join(*paths))
 
     def _create_dir(self, *identifiers: str, file_name: str = None) -> str:

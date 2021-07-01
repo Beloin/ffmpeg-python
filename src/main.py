@@ -1,4 +1,3 @@
-
 from api.endpoints import app
 from config.config import isDevelopment
 

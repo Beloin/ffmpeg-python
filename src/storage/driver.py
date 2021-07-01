@@ -1,7 +1,11 @@
 import abc
+from enum import Enum
 from typing import Literal, Tuple, Union
 
-Status = Literal['OK', 'FAIL']
+
+class Status(Enum):
+    OK = 'OK'
+    FAIL = 'FAIL'
 
 
 class DriverInterface(metaclass=abc.ABCMeta):

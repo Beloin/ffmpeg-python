@@ -27,13 +27,13 @@ class VideoService(FileService):
 
         path, status, info = self.driver.upload_file(dir)
 
-        if status == 'FAIL':
+        if status == status.FAIL:
             raise DriverException(info)
 
         return path
 
     def download(self, path: str):
-        return super().donwload(path)
+        return super().download(path)
 
     def delete(self, path: str):
         return super().delete(path)

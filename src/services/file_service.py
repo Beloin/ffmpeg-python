@@ -1,4 +1,6 @@
 from typing import Union
+
+from storage.driver import Status
 from .file_service_interface import (
     FileServiceInterface,
     DriverInterface,
@@ -13,7 +15,7 @@ class FileService(FileServiceInterface):
     def upload(self, file: Union[str, any], *identifiers: str) -> str:
         path, status, info = self.driver.upload_file(file, *identifiers)
 
-        if status == 'FAIL':
+        if status == Status.FAIL:
             raise DriverException(info)
 
         return path
@@ -21,7 +23,7 @@ class FileService(FileServiceInterface):
     def download(self, path: str) -> any:
         file, status, info = self.driver.download_file(path)
 
-        if status == 'FAIL':
+        if status == Status.FAIL:
             raise DriverException(info)
 
         return file
@@ -29,7 +31,5 @@ class FileService(FileServiceInterface):
     def delete(self, path: str) -> Union[None, bool]:
         status, info = self.driver.delete_file(path)
 
-        if status == 'FAIL':
+        if status == Status.FAIL:
             raise DriverException(info)
-
-        
