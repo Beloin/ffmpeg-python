@@ -1,14 +1,20 @@
+from enum import Enum
+
 import ffmpeg_streaming as ff
 from typing import List, Literal, Tuple
 from os.path import join
 
-VSize = Literal["1920X1080", "1080X720", "720X480"]
+
+class VSize(Enum):
+    FHD = "1920X1080"
+    HD = "1080X720"
+    HQ = "720X480"
 
 
 class FFmpegUser:
     """ FFMPEG User. Renders a video. """
 
-    def render_hls_video(self, path: str, output: str, vsizes: List[VSize],
+    def render_hls_video(self, path: str, output: str, video_sizes: List[VSize],
                          main_name='index.m3u8') -> Tuple[str, str]:
         """
         Creates a HLS video from filePath.
@@ -17,7 +23,7 @@ class FFmpegUser:
         -----------
         path: input path.
         output: file output.
-        vsizes: Video sizes.
+        video_sizes: Video sizes.
         main_name: Main HLS video name.
 
         Returns
@@ -29,8 +35,8 @@ class FFmpegUser:
         hls = video.hls(ff.Formats.h264())
 
         rep = []
-        for vsize in vsizes:
-            rep.append(self.__get_representation(vsize))
+        for video_size in video_sizes:
+            rep.append(self.__get_representation(video_size))
 
         hls.representations(*rep)
 
@@ -41,11 +47,12 @@ class FFmpegUser:
 
         return output, new_output
 
-    def __get_representation(self, vsize: VSize):
-        if vsize == '1080X720':
+    @staticmethod
+    def __get_representation(vide_size: VSize):
+        if vide_size == '1080X720':
             return ff.Representation(
                 ff.Size(1080, 720), ff.Bitrate(2048 * 2 ^ 10, 320 * 1024))
-        elif vsize == '720X480':
+        elif vide_size == '720X480':
             return ff.Representation(
                 ff.Size(720, 480), ff.Bitrate(750 * 1024, 192 * 1024))
 

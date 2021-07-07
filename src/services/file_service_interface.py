@@ -11,7 +11,7 @@ class DriverException(Exception):
 
 class FileServiceInterface(metaclass=abc.ABCMeta):
     """
-    FileServiceInterface. Used to acess or upload a file.
+    FileServiceInterface. Used to access or upload a file.
     """
     def __init__(self, driver: DriverInterface) -> None:
         self.driver = driver

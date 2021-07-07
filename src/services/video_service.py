@@ -1,8 +1,8 @@
 from typing import Union
-from ffmpeg.ffmpeg_user import FFmpegUser
+from ffmpeg.ffmpeg_user import FFmpegUser, VSize
 from services.file_service import FileService
 from storage.driver import DriverInterface
-from .file_service_interface import (DriverException)
+from file_service_interface import (DriverException)
 
 
 class VideoService(FileService):
@@ -16,16 +16,14 @@ class VideoService(FileService):
         """
         Uploads a video. Converting it into HLS video format.
         """
-        if type(file) is str:
-            dir, file = self._ffmpeg_user.render_hls_video(
-                file, self._stream_dir, ["1080X720", "720X480"], main_name='index.m3u8',
-            )
-            self.driver.upload_file(dir, *identifiers)
+        if type(file) is not str: raise NotImplementedError
 
-        else:
-            raise NotImplementedError
+        direct, file = self._ffmpeg_user.render_hls_video(
+            file, self._stream_dir, [VSize.FHD, VSize.HD], main_name='index.m3u8',
+        )
 
-        path, status, info = self.driver.upload_file(dir)
+        self.driver.upload_file(direct, *identifiers)
+        path, status, info = self.driver.upload_file(direct)
 
         if status == status.FAIL:
             raise DriverException(info)

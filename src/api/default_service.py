@@ -1,6 +1,5 @@
 from enum import Enum
 from io import BufferedReader
-from typing import Literal
 
 from services.file_service import FileService
 from services.video_service import VideoService
