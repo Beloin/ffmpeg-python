@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, BinaryIO
 
 from storage.driver import Status
 from .file_service_interface import (
@@ -20,7 +20,7 @@ class FileService(FileServiceInterface):
 
         return path
 
-    def download(self, path: str) -> any:
+    def download(self, path: str) -> BinaryIO:
         file, status, info = self.driver.download_file(path)
 
         if status == Status.FAIL:
@@ -33,3 +33,5 @@ class FileService(FileServiceInterface):
 
         if status == Status.FAIL:
             raise DriverException(info)
+
+        return True

@@ -1,7 +1,8 @@
 import re
+from io import BufferedReader
 from typing import Tuple
 
-from flask import Flask, request
+from flask import Flask, request, send_file
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from api.default_service import DefaultService, FileType
@@ -30,12 +31,16 @@ def upload_file(identifiers: str):
 @app.get('/storage/<path:file_path>')
 def get_file(file_path: str):
     ret = service.get_file(file_path)
-    return ret.read()
+
+    # Get file_name. Not done with BinaryIO
+    name = ret.name
+    return send_file(name)
 
 
 @app.delete('/storage/<path:file_path>')
 def delete_item(file_path: str):
-    return service.delete_file(file_path)
+    service.delete_file(file_path)
+    return 'File deleted successfully'
 
 
 def parse_media_type(media_type: str):
@@ -49,6 +54,7 @@ def save_local_file(file_upload: FileStorage, identifiers: str = None):
     cwd = os.getcwd()
     relative_path = os.path.join(STREAM_DIR, file_name)
     file_path = cwd + relative_path
+    file_path = os.path.normpath(file_path)
 
     file_upload.save(file_path)
 

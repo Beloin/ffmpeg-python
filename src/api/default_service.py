@@ -1,5 +1,6 @@
 from enum import Enum
 from io import BufferedReader
+from typing import BinaryIO
 
 from config.config import STREAM_DIR
 from services.file_service import FileService
@@ -29,7 +30,7 @@ class DefaultService:
 
         return self.fileService.upload(path, *identifiers)
 
-    def get_file(self, path: str) -> BufferedReader:
+    def get_file(self, path: str) -> BinaryIO:
         return self.fileService.download(path)
 
     def delete_file(self, path: str):

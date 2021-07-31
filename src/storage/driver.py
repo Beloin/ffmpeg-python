@@ -1,6 +1,6 @@
 import abc
 from enum import Enum
-from typing import Literal, Tuple, Union
+from typing import Literal, Tuple, Union, BinaryIO
 
 
 class Status(Enum):
@@ -14,13 +14,13 @@ class DriverInterface(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def upload_file(self, file_or_dir: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[str, Status, str]:
+    def upload_file(self, file_: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[str, Status, str]:
         """ 
         Uploads a file. or a dir. 
 
         Parameters
         --------
-        file_or_dir: str | any (as a Buffer like object). Can be file or the directory of containing files.
+        file_: str | any (as a Buffer like object). Can be file or the directory of containing files.
         identifiers: Tuple[str]
 
         file_name: str represents the file_name. (Optional)
@@ -37,7 +37,7 @@ class DriverInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def download_file(self, path: str) -> Tuple[any, Status, str]:
+    def download_file(self, path: str) -> Tuple[Union[BinaryIO, any], Status, str]:
         """
         Downloads a file.
 

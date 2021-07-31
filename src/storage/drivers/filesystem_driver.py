@@ -1,8 +1,12 @@
+import re
+import string
+from functools import reduce
 from io import BufferedReader
 import os
 from os.path import join, normpath, isfile
 import shutil
-from typing import Tuple, Union
+import random
+from typing import Tuple, Union, BinaryIO
 from storage.driver import DriverInterface, Status
 
 
@@ -18,35 +22,28 @@ class FileSystemDriver(DriverInterface):
 
         self.save_dir = save_dir
 
-    def upload_file(self, file_or_dir: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[
+    def upload_file(self, file_: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[
         Union[str, None], Status, str
     ]:
-        # to_save = self.__join_cwd(self.save_dir, *identifiers)
-
-        if type(file_or_dir) is str:
+        if type(file_) is str:
             try:
-                return self.__save_file(file_name, file_or_dir, identifiers)
+                return self.__save_file(file_, identifiers)
             except Exception as e:
                 return None, Status.FAIL, str(e)
 
         # If is not file. We don't have yet an implementation.
         raise Exception('File not sent in str like.')
 
-    def __save_file(self, file_name, file_, identifiers):
-        to_path = self.__create_dir(*identifiers, file_name=file_name)
-        shutil.move(file_, to_path)
-        return to_path, Status.OK, 'File saved successfully'
-
     def delete_file(self, path: str) -> Tuple[Status, str]:
         try:
-            path = self.__normajoin(self.save_dir, path)
+            path = join(self.__get_save_path(), path)
             os.remove(path)
 
             return Status.OK, 'File deleted successfully'
         except Exception as e:
             return Status.FAIL, str(e)
 
-    def download_file(self, path: str) -> Tuple[any, Status, str]:
+    def download_file(self, path: str) -> Tuple[Union[BinaryIO, None], Status, str]:
         try:
             reader = self.__read_file(path)
             return reader, Status.OK, 'File sent in Buffer.'
@@ -54,11 +51,13 @@ class FileSystemDriver(DriverInterface):
             return None, Status.FAIL, str(e)
 
     # Private Methods
-    @staticmethod
-    def __read_file(path: str) -> BufferedReader:
-        if not isfile(path):
+    def __read_file(self, relative_path: str) -> BinaryIO:
+        save_path = self.__get_save_path()
+        full_path = join(save_path, relative_path)
+
+        if not isfile(full_path):
             raise Exception('Path needs to be a file.')
-        f = open(path, 'rb')
+        f = open(full_path, 'rb')
 
         return f
 
@@ -72,54 +71,52 @@ class FileSystemDriver(DriverInterface):
         path = join(*paths)
         return cwd + path
 
-    # def __create_dir(self, *identifiers: str, file_name: str = None) -> str:
-    #     """
-    #     If `file_name` is None, last id is used as file_name.
-    #
-    #     Returns
-    #     --------
-    #     path to file. (obs: File is not created.)
-    #     """
-    #
-    #     if file_name:
-    #         path = self.__normajoin(*identifiers)
-    #         return self.__normajoin(path, file_name)
-    #
-    #     file = identifiers[len(identifiers) - 1]
-    #     dirs = identifiers[:len(identifiers) - 1]
-    #
-    #     path = self.__normajoin(self.save_dir, *dirs)
-    #     os.makedirs(path)
-    #
-    #     return self.__normajoin(path, *file)
-
-    def __create_dir(self, *identifiers: str, file_name: str = None) -> str:
+    def __get_save_path(self):
         """
-        Creates a dir with the identifiers and return path to *file*.
+        Get the save_dir full path.
+        """
+        return normpath(self.__join_cwd(self.save_dir))
 
-        If `file_name` is None, last id is used as file_name.
+    def __save_file(self, file_path, *identifiers):
+        random_id, full_path = self.__create_directory()
+        file_name = self.__create_file_name(*identifiers)
+        arq_type = self.__get_arq_type(file_path)
 
-        IMPORTANT : Returns path to save *file* which means the current returned file does not exist.
+        file_name = file_name + arq_type
+        full_path = join(full_path, file_name)
+
+        shutil.move(file_path, full_path)
+
+        relative_id = join(random_id, file_name)
+
+        return relative_id, Status.OK, 'File saved successfully'
+
+    def __create_directory(self, random_digits=16) -> Tuple[str, str]:
+        """
+        Creates a dir with random identifier.
+
+        Parameters
+        ------------
+        random_digits: int - Represents the number of random digits in the created random id
 
         Returns
-        --------
-        path to file. (obs: File is not created.)
+        ------------
+        random_id: str - Random generated id.
+        full_path: str - Full path to created dir.
         """
+        full_path = self.__get_save_path()
+        random_str = ''.join(
+            random.choices(string.ascii_uppercase + string.digits + string.ascii_lowercase, k=random_digits)
+        )
+        created_dir = join(full_path, random_str)
+        os.makedirs(created_dir)
+        return random_str, created_dir
 
-        if file_name:
-            path = join(*identifiers)
-            path = self.__join_cwd(path)
-            os.makedirs(path)
+    @staticmethod
+    def __get_arq_type(file_path: str) -> str:
+        match = re.findall(r"\..*$", file_path)[0]
+        return match
 
-            path = join(path, file_name)
-
-            return path
-
-        file_name = identifiers[len(identifiers) - 1]
-        dirs = identifiers[:len(identifiers) - 1]
-
-        path = join(self.save_dir, *dirs)
-        path = self.__join_cwd(path)
-        os.makedirs(path)
-
-        return join(path, *file_name)
+    @staticmethod
+    def __create_file_name(*identifiers: str):
+        return reduce(lambda a, b: a + '_' + b, *identifiers)
