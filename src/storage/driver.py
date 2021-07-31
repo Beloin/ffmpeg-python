@@ -14,16 +14,16 @@ class DriverInterface(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def upload_file(self, file: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[str, Status, str]:
+    def upload_file(self, file_or_dir: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[str, Status, str]:
         """ 
         Uploads a file. or a dir. 
 
         Parameters
         --------
-        file: str | any (as a Buffer like object)
+        file_or_dir: str | any (as a Buffer like object). Can be file or the directory of containing files.
         identifiers: Tuple[str]
 
-        (Optional) file_name: str represents the file_name.
+        file_name: str represents the file_name. (Optional)
         If sent `file_name` the last identifier is not used anymore for identify the file.
 
         Returns

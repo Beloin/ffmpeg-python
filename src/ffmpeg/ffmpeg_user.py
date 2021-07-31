@@ -6,6 +6,7 @@ from os.path import join
 
 
 class VSize(Enum):
+    """ Video Sizes in an Enum format"""
     FHD = "1920X1080"
     HD = "1080X720"
     HQ = "720X480"

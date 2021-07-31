@@ -1,8 +1,8 @@
 from typing import Union
 from ffmpeg.ffmpeg_user import FFmpegUser, VSize
 from services.file_service import FileService
+from services.file_service_interface import DriverException
 from storage.driver import DriverInterface
-from file_service_interface import (DriverException)
 
 
 class VideoService(FileService):
@@ -29,9 +29,3 @@ class VideoService(FileService):
             raise DriverException(info)
 
         return path
-
-    def download(self, path: str):
-        return super().download(path)
-
-    def delete(self, path: str):
-        return super().delete(path)

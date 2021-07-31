@@ -1,8 +1,10 @@
 from enum import Enum
 from io import BufferedReader
 
+from config.config import STREAM_DIR
 from services.file_service import FileService
 from services.video_service import VideoService
+from storage.driver import DriverInterface
 from storage.drivers.filesystem_driver import FileSystemDriver
 
 
@@ -12,7 +14,7 @@ class FileType(Enum):
 
 
 class DefaultService:
-    defaultDriver = FileSystemDriver('./test_files')
+    defaultDriver: DriverInterface = FileSystemDriver(STREAM_DIR)
     videoService = VideoService(defaultDriver)
     fileService = FileService(defaultDriver)
 
