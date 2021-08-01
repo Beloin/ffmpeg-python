@@ -27,7 +27,7 @@ class FileSystemDriver(DriverInterface):
     ]:
         if type(file_) is str:
             try:
-                return self.__save_file(file_, identifiers)
+                return self._save(file_, identifiers)
             except Exception as e:
                 return None, Status.FAIL, str(e)
 
@@ -77,7 +77,12 @@ class FileSystemDriver(DriverInterface):
         """
         return normpath(self.__join_cwd(self.save_dir))
 
-    def __save_file(self, file_path, *identifiers):
+    def _save(self, file_path, *identifiers):
+        if os.path.isdir(file_path):
+            return self._save_dir(file_path, *identifiers)
+        return self._save_file(file_path, *identifiers)
+
+    def _save_file(self, file_path, *identifiers):
         random_id, full_path = self.__create_directory()
         file_name = self.__create_file_name(*identifiers)
         arq_type = self.__get_arq_type(file_path)
@@ -90,6 +95,19 @@ class FileSystemDriver(DriverInterface):
         relative_id = join(random_id, file_name)
 
         return relative_id, Status.OK, 'File saved successfully'
+
+    def _save_dir(self, file_path, *identifiers):
+        random_id, full_path = self.__create_directory()
+        file_name = self.__create_file_name(*identifiers)
+
+        full_path = join(full_path, file_name)
+
+        shutil.move(file_path, full_path)
+
+        relative_id = join(random_id, file_name)
+
+        return relative_id, Status.OK, 'File saved successfully'
+
 
     def __create_directory(self, random_digits=16) -> Tuple[str, str]:
         """

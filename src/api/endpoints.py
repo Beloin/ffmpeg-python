@@ -3,14 +3,15 @@ from io import BufferedReader
 from typing import Tuple
 
 from flask import Flask, request, send_file
+from flask_cors import CORS
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from api.default_service import DefaultService, FileType
-from config.config import STREAM_DIR
+from config.config import STREAM_DIR_RELATIVE_PATH
 import os
 
 app = Flask(__name__)
-
+CORS(app, resources={r"/storage/*": {"origins": "*"}})
 service = DefaultService()
 
 
@@ -44,7 +45,9 @@ def delete_item(file_path: str):
 
 
 def parse_media_type(media_type: str):
-    if re.match("/VIDEO/gi", media_type):
+    pattern = re.compile('VIDEO', re.IGNORECASE)
+    matches = re.match(pattern, media_type)
+    if matches is not None:
         return FileType.VIDEO
     return FileType.FILE
 
@@ -52,7 +55,7 @@ def parse_media_type(media_type: str):
 def save_local_file(file_upload: FileStorage, identifiers: str = None):
     file_name = secure_filename(file_upload.filename)
     cwd = os.getcwd()
-    relative_path = os.path.join(STREAM_DIR, file_name)
+    relative_path = os.path.join(STREAM_DIR_RELATIVE_PATH, file_name)
     file_path = cwd + relative_path
     file_path = os.path.normpath(file_path)
 

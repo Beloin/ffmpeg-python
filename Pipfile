@@ -8,6 +8,8 @@ python-ffmpeg-video-streaming = "*"
 flask = "*"
 python-dotenv = "*"
 Werkzeug="2.0.1"
+flask-cors = "*"
+pika = "*"
 
 [dev-packages]
 autopep8 = "*"

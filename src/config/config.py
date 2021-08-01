@@ -1,4 +1,6 @@
 import os
+from os.path import join, normpath
+
 from dotenv import load_dotenv
 
 APP_ENV = os.environ.get('APP_ENV')
@@ -8,7 +10,15 @@ isDevelopment = not isStaging
 
 load_dotenv(f'.env.{APP_ENV}')
 
-STREAM_DIR = os.environ.get('STREAM_DIR')
+RABBITMQ_URL = os.environ.get('RABBITMQ_URL') or 'ampq://localhost'
+
+STREAM_DIR_RELATIVE_PATH = os.environ.get('STREAM_DIR')
+HLS_DIR_RELATIVE_PATH = os.environ.get('HLS_DIR')
+
+# HLS DIR ABS PATH.
+HLS_DIR_ABS_PATH = normpath(os.getcwd() + HLS_DIR_RELATIVE_PATH)
+STREAM_DIR_ABS_PATH = normpath(os.getcwd() + STREAM_DIR_RELATIVE_PATH)
+
 DRIVER = os.environ.get('DRIVER')
 
 IS_FS = DRIVER == 'FS'

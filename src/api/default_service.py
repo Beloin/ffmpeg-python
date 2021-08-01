@@ -2,7 +2,7 @@ from enum import Enum
 from io import BufferedReader
 from typing import BinaryIO
 
-from config.config import STREAM_DIR
+from config.config import STREAM_DIR_RELATIVE_PATH, HLS_DIR_ABS_PATH
 from services.file_service import FileService
 from services.video_service import VideoService
 from storage.driver import DriverInterface
@@ -15,8 +15,8 @@ class FileType(Enum):
 
 
 class DefaultService:
-    defaultDriver: DriverInterface = FileSystemDriver(STREAM_DIR)
-    videoService = VideoService(defaultDriver)
+    defaultDriver: DriverInterface = FileSystemDriver(STREAM_DIR_RELATIVE_PATH)
+    videoService = VideoService(defaultDriver, HLS_DIR_ABS_PATH)
     fileService = FileService(defaultDriver)
 
     def upload_file(self, path: str, file_type: FileType, *identifiers: str) -> str:
