@@ -1,3 +1,4 @@
+import abc
 from io import BytesIO
 from typing import Callable
 
@@ -5,17 +6,18 @@ import pika
 from pika.exchange_type import ExchangeType
 
 
-class RabbitMQServer:
+class RabbitMQServer(metaclass=abc.ABC):
 
     def __init__(self, connection_url='ampq://localhost'):
         self._connection = pika.BlockingConnection(pika.ConnectionParameters(host=connection_url))
         self._channel = self._connection.channel()
 
-    def consume_topic(self, exchange: str, route: str, cb: Callable[[str, str, ], None]):
+    def consume_topic(self, exchange: str, route: str, cb: Callable[[str, str, any, any], None]):
         self._channel.exchange_declare(exchange, ExchangeType.topic)
         result = self._channel.queue_declare('', exclusive=True)
         queue_name = result.method.queue
         self._channel.queue_bind(queue_name, exchange, route)
+        self._channel.basic_consume(queue_name, cb, True)
 
     def publish_in_topic(self, exchange: str, route: str, message: str):
         self._channel.exchange_declare(exchange, ExchangeType.topic)
