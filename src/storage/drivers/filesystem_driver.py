@@ -108,7 +108,6 @@ class FileSystemDriver(DriverInterface):
 
         return relative_id, Status.OK, 'File saved successfully'
 
-
     def __create_directory(self, random_digits=16) -> Tuple[str, str]:
         """
         Creates a dir with random identifier.

@@ -7,7 +7,11 @@ from services.file_service import FileService
 from services.video_service import VideoService
 from storage.driver import DriverInterface
 from storage.drivers.filesystem_driver import FileSystemDriver
+from redis import Redis
+from rq import Queue
 
+
+# Make an redis conf.
 
 class FileType(Enum):
     VIDEO = 'VIDEO'
@@ -18,6 +22,7 @@ class DefaultService:
     defaultDriver: DriverInterface = FileSystemDriver(STREAM_DIR_RELATIVE_PATH)
     videoService = VideoService(defaultDriver, HLS_DIR_ABS_PATH)
     fileService = FileService(defaultDriver)
+    _redisQueue = Queue(connection=Redis(host='localhost'))
 
     def upload_file(self, path: str, file_type: FileType, *identifiers: str) -> str:
         """
@@ -26,7 +31,9 @@ class DefaultService:
         """
 
         if file_type == FileType.VIDEO:
-            return self.videoService.upload(path, *identifiers)
+            self._redisQueue.enqueue(self.videoService.upload, path, *identifiers)
+            self.videoService.upload(path, *identifiers)
+            return ''
 
         return self.fileService.upload(path, *identifiers)
 

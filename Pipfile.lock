@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "75529b72fb39f047abde4f6324221e47274bb9e5c8d0a177525a6d1b54b18202"
+            "sha256": "cc0ec54aab0de51d9465ded03855b646f56fd76530c57e7be441e5078d4a7724"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -119,6 +119,22 @@
             ],
             "index": "E-learning Storage",
             "version": "==0.1.14"
+        },
+        "redis": {
+            "hashes": [
+                "sha256:0e7e0cfca8660dea8b7d5cd8c4f6c5e29e11f31158c0b0ae91a397f00e5a05a2",
+                "sha256:432b788c4530cfe16d8d943a09d40ca6c16149727e4afe8c2c9d5580c59d9f24"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
+            "version": "==3.5.3"
+        },
+        "rq": {
+            "hashes": [
+                "sha256:7af1e9706dbe6f1eac16dffacd8271ec27c1369950941f14dab6bb08a62979d7",
+                "sha256:bdfef943de838955e474cfd0e25b9b8c53ed4b9c361fe4bb11cf56d17a87acc5"
+            ],
+            "index": "E-learning Storage",
+            "version": "==1.9.0"
         },
         "six": {
             "hashes": [

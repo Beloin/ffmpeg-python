@@ -17,7 +17,10 @@ service = DefaultService()
 
 @app.post('/storage/<path:identifiers>')
 def upload_file(identifiers: str):
-    """ Identifiers separated by '/'."""
+    """
+    Identifiers separated by '/'.
+    Example: /storage/e-learning/media1
+    """
     file_upload = request.files['file']
     file_path = save_local_file(file_upload)
 

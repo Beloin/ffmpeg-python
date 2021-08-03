@@ -18,6 +18,10 @@ import abc
 
 class Ab(metaclass=abc.ABC):
 
+    def __init__(self):
+        super(Ab, self).__init__()
+
+
     @abc.abstractmethod
     def afun(self):
         print(12)
