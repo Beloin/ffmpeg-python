@@ -1,9 +1,12 @@
 import re
+from http import HTTPStatus
 from io import BufferedReader
 from typing import Tuple
 
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, Response
 from flask_cors import CORS
+from redis import Redis
+from rq import Queue
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from api.default_service import DefaultService, FileType
@@ -12,7 +15,9 @@ import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/storage/*": {"origins": "*"}})
-service = DefaultService()
+
+redis_queue = Queue(connection=Redis(host='localhost'))
+service = DefaultService(redis_queue)
 
 
 @app.post('/storage/<path:identifiers>')
@@ -23,13 +28,15 @@ def upload_file(identifiers: str):
     """
     file_upload = request.files['file']
     file_path = save_local_file(file_upload)
-
     request_dict = request.form.to_dict()
     file_type = parse_media_type(request_dict["mediaType"])
+    notification_url = request_dict['notificationUrl']
 
-    path = service.upload_file(file_path, file_type, *identifiers.split('/'))
+    service.upload_file(file_path, file_type, notification_url, identifiers.split('/'))
+    response = Response()
+    response.status = HTTPStatus.CREATED
 
-    return path
+    return response
 
 
 @app.get('/storage/<path:file_path>')
@@ -44,7 +51,10 @@ def get_file(file_path: str):
 @app.delete('/storage/<path:file_path>')
 def delete_item(file_path: str):
     service.delete_file(file_path)
-    return 'File deleted successfully'
+    response = Response('OK')
+    response.status = HTTPStatus.NO_CONTENT
+
+    return response
 
 
 def parse_media_type(media_type: str):

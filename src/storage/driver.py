@@ -15,7 +15,7 @@ class DriverInterface(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def upload_file(self, file_: Union[str, any], *identifiers: str, file_name: str = None) -> Tuple[str, Status, str]:
-        """ 
+        """
         Uploads a file. or a dir.
 
         If is a dir, returns the path for the `dir`.
@@ -23,7 +23,8 @@ class DriverInterface(metaclass=abc.ABCMeta):
         Parameters
         --------
         file_: str | any (as a Buffer like object). Can be a file, or the directory of containing files.
-        identifiers: Tuple[str]
+        identifiers: Tuple[str] a list of identifiers, used to identify the path to saved file. The first identifier is used
+        as main item e.g. FS: main directory, S3: Bucket Name
 
         file_name: str represents the file_name. (Optional)
         If sent `file_name` the last identifier is not used anymore for identify the file.

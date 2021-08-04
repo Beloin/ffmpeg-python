@@ -11,6 +11,8 @@ Werkzeug="2.0.1"
 flask-cors = "*"
 pika = "*"
 rq = "*"
+redis = "*"
+requests = "*"
 
 [dev-packages]
 autopep8 = "*"

@@ -6,6 +6,7 @@ from .file_service_interface import (
     DriverInterface,
     DriverException
 )
+from services.null_identifiers import NullIdentifiers
 
 
 class FileService(FileServiceInterface):
@@ -14,6 +15,9 @@ class FileService(FileServiceInterface):
 
     def upload(self, file: Union[str, any], *identifiers: str) -> str:
         path, status, info = self.driver.upload_file(file, *identifiers)
+        if type(file) is not str: raise NotImplementedError
+        if identifiers is None or len(identifiers) == 0:
+            raise NullIdentifiers()
 
         if status == Status.FAIL:
             raise DriverException(info)

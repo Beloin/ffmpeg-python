@@ -11,6 +11,7 @@ isDevelopment = not isStaging
 load_dotenv(f'.env.{APP_ENV}')
 
 RABBITMQ_URL = os.environ.get('RABBITMQ_URL') or 'ampq://localhost'
+REDIS_URL = os.environ.get('REDIS_URL') or 'localhost'
 
 STREAM_DIR_RELATIVE_PATH = os.environ.get('STREAM_DIR')
 HLS_DIR_RELATIVE_PATH = os.environ.get('HLS_DIR')
