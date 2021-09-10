@@ -18,6 +18,9 @@ class VSize(Enum):
 class FFmpegUser:
     """ FFMPEG User. Renders a video. """
 
+    def __init__(self):
+        pass
+
     def render_hls_video(self, path: str, output: str, video_sizes: List[VSize],
                          main_name='index.m3u8') -> Tuple[str, str]:
         """

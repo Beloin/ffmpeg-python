@@ -8,13 +8,12 @@ from storage.driver import DriverInterface
 
 
 class VideoService(FileService):
-    _ffmpeg_user = FFmpegUser()
-    _hls_dir = ''
-    _MAIN_FILE_NAME = 'index.m3u8'
-
     def __init__(self, driver: DriverInterface, hls_dir: str) -> None:
         super().__init__(driver)
         self._hls_dir = hls_dir
+        self._ffmpeg_user = FFmpegUser()
+        self._hls_dir = ''
+        self._MAIN_FILE_NAME = 'index.m3u8'
 
     def upload(self, file: Union[str, any], *identifiers: str) -> str:
         r"""

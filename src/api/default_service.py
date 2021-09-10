@@ -21,10 +21,9 @@ class DefaultService:
 
     def __init__(self, redis_queue):
         self._redis_queue = redis_queue
-
-    defaultDriver: DriverInterface = FileSystemDriver(STREAM_DIR_RELATIVE_PATH)
-    videoService = VideoService(defaultDriver, HLS_DIR_ABS_PATH)
-    fileService = FileService(defaultDriver)
+        self.defaultDriver = FileSystemDriver(STREAM_DIR_RELATIVE_PATH)
+        self.videoService = VideoService(defaultDriver, HLS_DIR_ABS_PATH)
+        self.fileService = FileService(defaultDriver)
 
     def upload_file(self, path: str, file_type: FileType, notification_url: str,
                     identifiers_list: List[str] = None,
@@ -52,6 +51,7 @@ class DefaultService:
                 response_identifiers[name] = value
 
         if file_type == FileType.VIDEO:
+            # Enqueue with RedisQueue
             self._redis_queue.enqueue(
                 self.videoService.upload, path, *identifiers,
                 notification_url=notification_url,
@@ -59,6 +59,7 @@ class DefaultService:
                 on_success=self._on_success_queue
             )
         else:
+            # Enqueue with RedisQueue
             self._redis_queue.enqueue(
                 self.fileService.upload, path, *identifiers,
                 notification_url=notification_url,
@@ -73,7 +74,7 @@ class DefaultService:
         return self.fileService.delete(path)
 
     @staticmethod
-    def _on_success_queue(job, connection: Redis, result: str, *args, **kwargs):
+    def _on_success_queue(job: str, connection: Redis, result: str, *args, **kwargs):
         notification_url = kwargs['notification_url']
         response_identifiers: dict = kwargs['response_identifiers']
         response_identifiers['path'] = result
